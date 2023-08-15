@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cassert>
 #include <malloc.h>
 
 class BaseAllocator
@@ -15,6 +16,7 @@ public:
     BaseAllocator(const BaseAllocator &ref) = delete;
     BaseAllocator(const std::size_t &totalSize, const std::size_t &alignment = 8)
     {
+        assert((alignment & (alignment - 1)) == 0);
         m_total = totalSize;
         m_alignment = alignment;
         m_used = 0;
