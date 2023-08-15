@@ -12,6 +12,11 @@ protected:
     std::size_t m_alignment;
     std::size_t m_used;
 
+    std::size_t fast_modulo(std::size_t p)
+    {
+        return p & (m_alignment - 1);
+    }
+
 public:
     BaseAllocator(const BaseAllocator &ref) = delete;
     BaseAllocator(const std::size_t &totalSize, const std::size_t &alignment = 8)

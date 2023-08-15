@@ -60,14 +60,18 @@ public:
 
     virtual void reset() override
     {
-        m_used = 0;
         const std::size_t n = m_total / m_chunkSize + 1;
-        std::size_t padding = 0;
+        std::size_t padding, address, modulo;
         std::size_t cursor = 0;
+
         for (std::size_t i = 0; i < n; i++)
         {
-            std::size_t address = (std::size_t)m_pointer + cursor;
-            padding = (((address / m_alignment) + 1) * m_alignment) - address;
+            address = (std::size_t)m_pointer + cursor;
+            modulo = fast_modulo(address);
+            padding = 0;
+
+            if (modulo != 0)
+                padding += m_alignment - modulo;
 
             if (cursor + m_chunkSize + padding > m_total)
                 return;
@@ -76,5 +80,6 @@ public:
             cursor += m_chunkSize + padding;
             push(address);
         }
+        m_used = 0;
     }
 };

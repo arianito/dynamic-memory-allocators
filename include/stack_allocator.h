@@ -19,15 +19,17 @@ public:
 
     virtual void *allocate(const std::size_t &size) override
     {
-        std::size_t address = (std::size_t)m_pointer + m_cursor;
-        std::size_t padding = 0;
         const std::size_t header_size = sizeof(Header);
-        if (m_alignment != 0)
-        {
-            padding = (((address / m_alignment) + 1) * m_alignment) - address;
-            if (padding < header_size)
-                padding += ((header_size / m_alignment) + (header_size % m_alignment > 0 ? 1 : 0)) * m_alignment;
-        }
+        std::size_t address = (std::size_t)m_pointer + m_cursor;
+        std::size_t modulo = fast_modulo(address);
+        std::size_t padding = 0;
+
+        if (modulo != 0)
+            padding += m_alignment - modulo;
+
+        if (padding < header_size)
+            padding += m_alignment;
+
         if (m_cursor + size + padding > m_total)
             return nullptr;
 
@@ -35,7 +37,7 @@ public:
         m_cursor += size + padding;
         m_used = m_cursor;
 
-        Header *header = new ((void *)(address - header_size)) Header();
+        Header *header = (Header *)(address - header_size);
         header->padding = (char)padding;
 
         return (void *)(address);

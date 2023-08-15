@@ -16,10 +16,11 @@ public:
     virtual void *allocate(const std::size_t &size) override
     {
         std::size_t address = (std::size_t)m_pointer + m_cursor;
+        std::size_t modulo = fast_modulo(address);
         std::size_t padding = 0;
 
-        if (m_alignment != 0 && m_cursor % m_alignment != 0)
-            padding = ((address / m_alignment) + 1) * m_alignment - address;
+        if (modulo != 0)
+            padding += m_alignment - modulo;
 
         if (m_cursor + size + padding > m_total)
             return nullptr;
