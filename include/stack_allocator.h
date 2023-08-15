@@ -12,21 +12,21 @@ private:
     };
 
 public:
-    StackAllocator(const std::size_t &totalSize) : BaseAllocator(totalSize)
+    StackAllocator(const std::size_t &totalSize, const std::size_t &alignment = 8) : BaseAllocator(totalSize, alignment)
     {
         reset();
     };
 
-    virtual void *allocate(const std::size_t &size, const std::size_t &alignment = 8) override
+    virtual void *allocate(const std::size_t &size) override
     {
         std::size_t address = (std::size_t)m_pointer + m_cursor;
         std::size_t padding = 0;
         const std::size_t header_size = sizeof(Header);
-        if (alignment != 0)
+        if (m_alignment != 0)
         {
-            padding = (((address / alignment) + 1) * alignment) - address;
+            padding = (((address / m_alignment) + 1) * m_alignment) - address;
             if (padding < header_size)
-                padding += ((header_size / alignment) + (header_size % alignment > 0 ? 1 : 0)) * alignment;
+                padding += ((header_size / m_alignment) + (header_size % m_alignment > 0 ? 1 : 0)) * m_alignment;
         }
         if (m_cursor + size + padding > m_total)
             return nullptr;

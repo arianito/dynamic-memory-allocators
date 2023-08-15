@@ -31,18 +31,18 @@ private:
     Node *m_head{nullptr};
 
 public:
-    PoolAllocator(const std::size_t &totalSize, const std::size_t &chunkSize) : BaseAllocator(totalSize)
+    PoolAllocator(const std::size_t &totalSize, const std::size_t &chunkSize, const std::size_t &alignment = 8) : BaseAllocator(totalSize, alignment)
     {
         m_chunkSize = chunkSize;
         reset();
     };
 
-    virtual void *allocate(const std::size_t &size, const std::size_t &alignment = 8) override
+    virtual void *allocate(const std::size_t &size) override
     {
         if (size != m_chunkSize)
             return nullptr;
 
-        Node* address = pop();
+        Node *address = pop();
 
         if (address == nullptr)
             return nullptr;
@@ -61,8 +61,20 @@ public:
     virtual void reset() override
     {
         m_used = 0;
-        const std::size_t n = m_total / m_chunkSize;
+        const std::size_t n = m_total / m_chunkSize + 1;
+        std::size_t padding = 0;
+        std::size_t cursor = 0;
         for (std::size_t i = 0; i < n; i++)
-            push((std::size_t)m_pointer + (i * m_chunkSize));
+        {
+            std::size_t address = (std::size_t)m_pointer + cursor;
+            padding = (((address / m_alignment) + 1) * m_alignment) - address;
+
+            if (cursor + m_chunkSize + padding > m_total)
+                return;
+
+            address += padding;
+            cursor += m_chunkSize + padding;
+            push(address);
+        }
     }
 };
