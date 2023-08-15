@@ -12,20 +12,30 @@ protected:
     std::size_t m_alignment;
     std::size_t m_used;
 
-    std::size_t fast_modulo(std::size_t p)
+    std::size_t calculate_padding(std::size_t address, std::size_t needed_space = 0)
     {
-        return p & (m_alignment - 1);
+        std::size_t modulo = address & (m_alignment - 1);
+        std::size_t padding = 0;
+
+        if (modulo != 0)
+            padding = m_alignment - modulo;
+
+        if (padding >= needed_space)
+            return padding;
+
+        int n = (needed_space & (m_alignment - 1)) > 0 ? 1 : 0;
+        return padding + m_alignment * ((needed_space / m_alignment) + n);
     }
 
 public:
     BaseAllocator(const BaseAllocator &ref) = delete;
-    BaseAllocator(const std::size_t &totalSize, const std::size_t &alignment = 8)
+    BaseAllocator(const std::size_t &total_size, const std::size_t &alignment = 8)
     {
         assert((alignment & (alignment - 1)) == 0);
-        m_total = totalSize;
+        m_total = total_size;
         m_alignment = alignment;
         m_used = 0;
-        m_pointer = malloc(totalSize);
+        m_pointer = malloc(total_size);
     };
     virtual ~BaseAllocator()
     {

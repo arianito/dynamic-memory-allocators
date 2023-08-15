@@ -21,14 +21,7 @@ public:
     {
         const std::size_t header_size = sizeof(Header);
         std::size_t address = (std::size_t)m_pointer + m_cursor;
-        std::size_t modulo = fast_modulo(address);
-        std::size_t padding = 0;
-
-        if (modulo != 0)
-            padding += m_alignment - modulo;
-
-        if (padding < header_size)
-            padding += m_alignment;
+        std::size_t padding = calculate_padding(address, header_size);
 
         if (m_cursor + size + padding > m_total)
             return nullptr;
