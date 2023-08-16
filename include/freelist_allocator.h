@@ -1,7 +1,6 @@
 #pragma once
 
 #include "base_allocator.h"
-#include <iostream>
 
 class FreelistAllocator : public BaseAllocator
 {
