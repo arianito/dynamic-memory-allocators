@@ -1,12 +1,13 @@
 # dynamic Memory allocation
-implementation of arena/stack/pool memory allocators
+implementation of arena/stack/pool/freelist memory allocators
 
 benchmark: number of allocations: <b>1,000,000
 ```yaml
-malloc: 224.225ms
-arena: 15.162ms
-stack: 17.29ms
-pool: 23.375ms
+malloc: 226.262ms
+arena: 14.723ms
+stack: 22.965ms
+pool: 15.224ms
+freelist: 57.83ms
 ```
 
 ### usage:
