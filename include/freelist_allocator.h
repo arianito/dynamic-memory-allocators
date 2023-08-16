@@ -21,6 +21,13 @@ private:
             return;
         }
 
+        if (node->m_next == nullptr)
+        {
+            node->m_next = newNode;
+            newNode->m_next = nullptr;
+            return;
+        }
+
         newNode->m_next = node->m_next;
         node->m_next = newNode;
     }
@@ -29,7 +36,7 @@ private:
     {
         if (prevNode == nullptr)
         {
-            m_head = m_head->m_next;
+            m_head = node->m_next;
             return;
         }
 
@@ -82,6 +89,27 @@ private:
         out_prev_node = prev;
     }
 
+    void join_next(Node *node)
+    {
+        if (node == nullptr)
+            return;
+
+        const std::size_t header_size = sizeof(Node);
+
+        Node *next = node->m_next;
+        if (next == nullptr)
+            return;
+
+        std::size_t start = (std::size_t)node + header_size - node->m_padding;
+        std::size_t end = (std::size_t)next - next->m_padding;
+
+        if (start + node->m_size != end)
+            return;
+
+        node->m_size += next->m_size;
+        remove(node, next);
+    }
+
 private:
     Node *m_head{nullptr};
 
@@ -95,7 +123,7 @@ public:
     {
         Node *node;
         Node *prevNode;
-        find_first(size, prevNode, node);
+        find_best(size, prevNode, node);
         assert(node != nullptr && "not enough memory");
 
         const std::size_t header_size = sizeof(Node);
@@ -145,27 +173,6 @@ public:
 
         join_next(freeedNode);
         join_next(prevNode);
-    }
-
-    void join_next(Node *node)
-    {
-        if (node == nullptr)
-            return;
-            
-        const std::size_t header_size = sizeof(Node);
-
-        Node *next = node->m_next;
-        if (next == nullptr)
-            return;
-
-        std::size_t start = (std::size_t)node + header_size - node->m_padding;
-        std::size_t end = (std::size_t)next - next->m_padding;
-
-        if (start + node->m_size != end)
-            return;
-
-        node->m_size += next->m_size;
-        remove(node, next);
     }
 
     virtual void reset() override
