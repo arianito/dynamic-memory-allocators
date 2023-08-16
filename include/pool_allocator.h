@@ -46,8 +46,7 @@ public:
 
         Node *address = pop();
 
-        if (address == nullptr)
-            return nullptr;
+        assert(address != nullptr && "not enough memory");
 
         m_used += m_chunk_size;
 

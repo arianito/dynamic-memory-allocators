@@ -8,7 +8,7 @@ private:
     std::size_t m_cursor;
     struct Header
     {
-        std::size_t padding;
+        char padding;
     };
 
 public:
@@ -22,9 +22,8 @@ public:
         const std::size_t header_size = sizeof(Header);
         std::size_t address = (std::size_t)m_pointer + m_cursor;
         std::size_t padding = calculate_padding(address, header_size);
-
-        if (m_cursor + size + padding > m_total)
-            return nullptr;
+        
+        assert(m_cursor + size + padding <= m_total && "not enough memory");
 
         address += padding;
         m_cursor += size + padding;
