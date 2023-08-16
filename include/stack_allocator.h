@@ -8,11 +8,11 @@ private:
     std::size_t m_cursor;
     struct Header
     {
-        char padding;
+        std::size_t padding;
     };
 
 public:
-    StackAllocator(const std::size_t &totalSize, const std::size_t &alignment = 8) : BaseAllocator(totalSize, alignment)
+    StackAllocator(const std::size_t &total_size, const std::size_t &alignment = 8) : BaseAllocator(total_size, alignment)
     {
         reset();
     };

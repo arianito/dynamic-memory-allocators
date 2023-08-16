@@ -8,7 +8,7 @@ private:
     std::size_t m_cursor;
 
 public:
-    ArenaAllocator(const std::size_t &totalSize, const std::size_t &alignment = 8) : BaseAllocator(totalSize, alignment)
+    ArenaAllocator(const std::size_t &total_size, const std::size_t &alignment = 8) : BaseAllocator(total_size, alignment)
     {
         reset();
     };
